@@ -1,17 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
@@ -51,9 +41,10 @@ namespace MoodsicApp
 
             imagePath = dialog.FileName;
             this.pathBox.Text = imagePath;
+            scanAndPlay();
         }
 
-        private void scanAndPlay()
+        private async void scanAndPlay()
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
 
@@ -62,13 +53,34 @@ namespace MoodsicApp
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
         {
+            this.Log("Using " + imagePath + " file");
+
             EmotionServiceClient client = new EmotionServiceClient(apiKey);
             this.Log("Calling EmotionServiceClient.RecognizeAsync()...");
+
+            try
+            {
+                using (Stream imageFileStream = File.OpenRead(imagePath))
+                {
+                    // Detect the emotions
+                    return await client.RecognizeAsync(imageFileStream);
+                }
+            }
+            catch (Exception exception)
+            {
+                this.Log(exception.ToString());
+                return null;
+            }
         }
 
         private void Log(String text)
         {
             this.console.Text += "\n" + text;
+        }
+
+        private void LogEmotionResult(Emotion[] emotions)
+        {
+
         }
     }
 }
