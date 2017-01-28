@@ -17,10 +17,8 @@
                         <TextBox Name="pathBox" />
                         <Button Name="pathButton" Click="pathButton_Click">...</Button>
                     </WrapPanel>
-                    <ComboBox x:Name="VideoDevicesComboBox" >
+                    <ComboBox x:Name="VideoDevicesComboBox" />
                     <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    </ComboBox>
-                    <Image x:Name="webcamPreview" Height="100" Width="100"/>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>

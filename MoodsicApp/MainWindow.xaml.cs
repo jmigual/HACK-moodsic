@@ -38,7 +38,7 @@ namespace MoodsicApp
             binding_1.Source = VideoDevicesComboBox;
             WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
 
-            imagePath = @"C:\Users\aleix\Desktop\HC\Fotos_videos";;
+            imagePath = @"C:\Fotos_videos";;
             if (!Directory.Exists(imagePath))
                 Directory.CreateDirectory(imagePath);
 
