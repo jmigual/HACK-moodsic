@@ -13,6 +13,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Expression.Encoder.Devices;
+using Microsoft.ProjectOxford.Emotion;
+using Microsoft.ProjectOxford.Emotion.Contract;
 using Microsoft.Win32;
 
 namespace MoodsicApp
@@ -23,6 +25,7 @@ namespace MoodsicApp
     public partial class MainWindow : Window
     {
         private String imagePath;
+        private String apiKey = "1487efd373034a61b500849db503e8f1";
 
         public MainWindow()
         {
@@ -52,7 +55,20 @@ namespace MoodsicApp
 
         private void scanAndPlay()
         {
+            Emotion[] emotionResult = await UploadAndDetectEmotions();
 
+
+        }
+
+        private async Task<Emotion[]> UploadAndDetectEmotions()
+        {
+            EmotionServiceClient client = new EmotionServiceClient(apiKey);
+            this.Log("Calling EmotionServiceClient.RecognizeAsync()...");
+        }
+
+        private void Log(String text)
+        {
+            this.console.Text += "\n" + text;
         }
     }
 }

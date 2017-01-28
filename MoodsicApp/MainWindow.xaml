@@ -20,7 +20,7 @@
             </TabItem>
             <TabItem Header="Result"></TabItem>
             <TabItem Header="Console">
-                <TextBox />
+                <TextBox Name="console" />
             </TabItem>
         </TabControl>
     </Grid>
