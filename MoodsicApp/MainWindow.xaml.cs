@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Microsoft.Expression.Encoder.Devices;
+using Microsoft.Win32;
 
 namespace MoodsicApp
 {
@@ -27,6 +28,22 @@ namespace MoodsicApp
 
             //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
             //this.videoDevicesComboBox.ItemsSource = vDevices;
+        }
+
+        private void pathButton_Click(object sender, RoutedEventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog();
+            dialog.Filter = "Images|*.jpg;*.png";
+
+            bool? result = dialog.ShowDialog(this);
+
+            if (!(bool) result)
+            {
+                return;
+            }
+
+            string filePath = dialog.FileName;
+            this.pathBox.Text = filePath;
         }
     }
 }
