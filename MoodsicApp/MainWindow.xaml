@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Moodsic" Height="350" Width="525">
     <Grid>
         <TabControl Name="tabs">
             <TabItem Name="tabCamera" Header="Camera">
@@ -19,7 +19,9 @@
                 </StackPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>
-            <TabItem Header="Console"></TabItem>
+            <TabItem Header="Console">
+                <TextBox />
+            </TabItem>
         </TabControl>
     </Grid>
 </Window>

@@ -22,8 +22,12 @@ namespace MoodsicApp
     /// </summary>
     public partial class MainWindow : Window
     {
+        private String imagePath;
+
         public MainWindow()
         {
+            imagePath = "";
+
             InitializeComponent();
 
             //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
@@ -42,8 +46,13 @@ namespace MoodsicApp
                 return;
             }
 
-            string filePath = dialog.FileName;
-            this.pathBox.Text = filePath;
+            imagePath = dialog.FileName;
+            this.pathBox.Text = imagePath;
+        }
+
+        private void scanAndPlay()
+        {
+
         }
     }
 }
