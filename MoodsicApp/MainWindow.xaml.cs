@@ -7,6 +7,13 @@ using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
 using Microsoft.Win32;
+using WebcamControl;
+
+using System.Windows.Controls;
+using System.Windows.Data;
+
+//using AForge.Video;
+//using AForge.Video.DirectShow;
 
 namespace MoodsicApp
 {
@@ -24,6 +31,36 @@ namespace MoodsicApp
             InitializeComponent();
 
             this.console.FontFamily = new FontFamily("Consolas");
+
+
+            //////////////////////////
+            Binding binding_1 = new Binding("SelectedValue");
+            binding_1.Source = VideoDevicesComboBox;
+            WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
+
+            imagePath = @"C:\Users\aleix\Desktop\HC\Fotos_videos";;
+            if (!Directory.Exists(imagePath))
+                Directory.CreateDirectory(imagePath);
+
+            WebcamCtrl.ImageDirectory = imagePath;
+            WebcamCtrl.FrameRate = 30;
+            WebcamCtrl.FrameSize = new System.Drawing.Size(640, 480);
+
+            var vidDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+            VideoDevicesComboBox.ItemsSource = vidDevices;
+            VideoDevicesComboBox.SelectedIndex = 0;
+
+            // START CAPTURING
+            try
+            {
+                // Display webcam video
+                WebcamCtrl.StartPreview();
+            }
+            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+            {
+                MessageBox.Show("Device is in use by another application");
+            }
+            //////////////////////////
 
             //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
             //this.videoDevicesComboBox.ItemsSource = vDevices;
@@ -113,5 +150,7 @@ namespace MoodsicApp
                 emotionResultCount++;
             }
         }
+
+
     }
 }
