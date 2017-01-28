@@ -24,5 +24,10 @@ namespace MoodsicApp
         {
             InitializeComponent();
         }
+
+        private void CreateTabs()
+        {
+            
+        }
     }
 }
