@@ -17,7 +17,16 @@
                         <TextBox Name="pathBox" />
                         <Button Name="pathButton" Click="pathButton_Click">...</Button>
                     </WrapPanel>
-                    <ComboBox x:Name="VideoDevicesComboBox" />
+
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="22">
+                        <TextBlock Height="22" Width="78" HorizontalAlignment="Left" VerticalAlignment="Top"
+                           Text="Video Device" TextAlignment="Left" FlowDirection="LeftToRight" />
+                        <ComboBox Height="22" Width="210" HorizontalAlignment="Left" VerticalAlignment="Top"
+                          x:Name="VideoDevicesComboBox" />
+                    </StackPanel>
+                    
+                    <Button Content="Take Snapshot" HorizontalAlignment="Center" 
+                     x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
                     <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                 </StackPanel>
             </TabItem>

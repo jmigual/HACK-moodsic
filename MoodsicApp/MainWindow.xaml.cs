@@ -6,14 +6,13 @@ using System.Windows.Media;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
+using Microsoft.ProjectOxford.Common;
 using Microsoft.Win32;
 using WebcamControl;
 
 using System.Windows.Controls;
 using System.Windows.Data;
 
-//using AForge.Video;
-//using AForge.Video.DirectShow;
 
 namespace MoodsicApp
 {
@@ -32,13 +31,11 @@ namespace MoodsicApp
 
             this.console.FontFamily = new FontFamily("Consolas");
 
-
-            //////////////////////////
             Binding binding_1 = new Binding("SelectedValue");
             binding_1.Source = VideoDevicesComboBox;
             WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
 
-            imagePath = @"C:\Fotos_videos";;
+            imagePath = @"C:\webcam_photos";;
             if (!Directory.Exists(imagePath))
                 Directory.CreateDirectory(imagePath);
 
@@ -60,10 +57,14 @@ namespace MoodsicApp
             {
                 MessageBox.Show("Device is in use by another application");
             }
-            //////////////////////////
+            
 
-            //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
-            //this.videoDevicesComboBox.ItemsSource = vDevices;
+        }
+
+        private void TakeSnapshotButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Take snapshot of webcam video.
+            WebcamCtrl.TakeSnapshot();
         }
 
         private void pathButton_Click(object sender, RoutedEventArgs e)
