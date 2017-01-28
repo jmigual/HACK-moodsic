@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
@@ -20,8 +21,9 @@ namespace MoodsicApp
         public MainWindow()
         {
             imagePath = "";
-
             InitializeComponent();
+
+            this.console.FontFamily = new FontFamily("Consolas");
 
             //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
             //this.videoDevicesComboBox.ItemsSource = vDevices;
@@ -47,6 +49,7 @@ namespace MoodsicApp
         private async void scanAndPlay()
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
+            this.LogEmotionResult(emotionResult);
 
 
         }
@@ -80,7 +83,35 @@ namespace MoodsicApp
 
         private void LogEmotionResult(Emotion[] emotions)
         {
+            int emotionResultCount = 0;
+            if (emotions == null || emotions.Length <= 0)
+            {
+                Log("No emotion is detected. This might be due to:\n" +
+                    "    image is too small to detect faces\n" +
+                    "    no faces are in the images\n" +
+                    "    faces poses make it difficult to detect emotions\n" +
+                    "    or other factors");
+                return;
+            }
+            foreach (Emotion emotion in emotions)
+            {
+                Log("Emotion[" + emotionResultCount + "]");
+                Log("  .FaceRectangle = left: " + emotion.FaceRectangle.Left
+                            + ", top: " + emotion.FaceRectangle.Top
+                            + ", width: " + emotion.FaceRectangle.Width
+                            + ", height: " + emotion.FaceRectangle.Height);
 
+                Log("  Anger    : " + emotion.Scores.Anger.ToString());
+                Log("  Contempt : " + emotion.Scores.Contempt.ToString());
+                Log("  Disgust  : " + emotion.Scores.Disgust.ToString());
+                Log("  Fear     : " + emotion.Scores.Fear.ToString());
+                Log("  Happiness: " + emotion.Scores.Happiness.ToString());
+                Log("  Neutral  : " + emotion.Scores.Neutral.ToString());
+                Log("  Sadness  : " + emotion.Scores.Sadness.ToString());
+                Log("  Surprise : " + emotion.Scores.Surprise.ToString());
+                Log("");
+                emotionResultCount++;
+            }
         }
     }
 }
