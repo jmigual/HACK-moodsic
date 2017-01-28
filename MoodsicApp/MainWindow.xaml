@@ -9,7 +9,12 @@
     <Grid>
         <TabControl Name="tabs">
             <TabItem Name="tabCamera" Header="Camera">
-                <Label Content="Select an image" Height="100" Width="100"/>
+                <StackPanel>
+                    <Label Content="Select an image" Height="100" Width="100"/>
+                    <TextBox Name="pathBox" />
+                    <ComboBox Name="videoDevicesComboBox" />
+                    <Button Click="Button_Click" />
+                </StackPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>
             <TabItem Header="Console"></TabItem>

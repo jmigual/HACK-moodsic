@@ -12,6 +12,9 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Expression.Encoder.Devices;
+using Windows.Media.Capture;
+using Windows.Storage;
 
 namespace MoodsicApp
 {
@@ -23,11 +26,14 @@ namespace MoodsicApp
         public MainWindow()
         {
             InitializeComponent();
+
+            //var vDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+            //this.videoDevicesComboBox.ItemsSource = vDevices;
         }
 
-        private void CreateTabs()
+        private void Button_Click(object sender, RoutedEventArgs e)
         {
-            
+
         }
     }
 }
