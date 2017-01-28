@@ -4,9 +4,15 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
+        xmlns:Camera="clr-namespace:Panels/Camera;assembly="
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
-        
+        <TabControl>
+            <TabItem Header="Camera">
+            </TabItem>
+            <TabItem Header="Result"></TabItem>
+            <TabItem Header="Console"></TabItem>
+        </TabControl>
     </Grid>
 </Window>
