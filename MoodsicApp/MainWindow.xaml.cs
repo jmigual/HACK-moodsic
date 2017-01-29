@@ -24,6 +24,19 @@ namespace MoodsicApp
         private String imagePath;
         private String apiKey = "1487efd373034a61b500849db503e8f1";
 
+        private void startCapturing()
+        {
+            try
+            {
+                // Display webcam video
+                WebcamCtrl.StartPreview();
+            }
+            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
+            {
+                MessageBox.Show("Device is in use by another application");
+            }
+        }
+
         public MainWindow()
         {
             imagePath = "";
@@ -47,18 +60,7 @@ namespace MoodsicApp
             VideoDevicesComboBox.ItemsSource = vidDevices;
             VideoDevicesComboBox.SelectedIndex = 0;
 
-            // START CAPTURING
-            try
-            {
-                // Display webcam video
-                WebcamCtrl.StartPreview();
-            }
-            catch (Microsoft.Expression.Encoder.SystemErrorException ex)
-            {
-                MessageBox.Show("Device is in use by another application");
-            }
-            
-
+            startCapturing();
         }
 
         private void TakeSnapshotButton_Click(object sender, RoutedEventArgs e)
