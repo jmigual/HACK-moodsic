@@ -162,29 +162,29 @@ namespace MoodsicApp
                 }
             }
 
-            Emotion result = Emotion.ANGER;
             List<float> values = new List<float>(8);
 
-            values[0] = faceResult.Anger;
-            values[1] = faceResult.Contempt;
-            values[2] = faceResult.Disgust;
-            values[3] = faceResult.Fear;
-            values[4] = faceResult.Happiness;
-            values[5] = faceResult.Neutral;
-            values[6] = faceResult.Sadness;
-            values[7] = faceResult.Surprise;
+            values.Add(faceResult.Anger);
+            values.Add(faceResult.Contempt);
+            values.Add(faceResult.Disgust);
+            values.Add(faceResult.Fear);
+            values.Add(faceResult.Happiness);
+            values.Add(faceResult.Neutral);
+            values.Add(faceResult.Sadness);
+            values.Add(faceResult.Surprise);
 
             List<DetectedResult> emotionResults = new List<DetectedResult>(values.Count);
             for (int i = 0; i < values.Count; ++i)
             {
-                emotionResults[i] = new DetectedResult((Emotion)i, values[i]);
+                emotionResults.Add(new DetectedResult((Emotion)(i + 1), values[i]));
             }
             emotionResults.Sort();
 
 
             int j = emotionResults.Count - 1;
-            analysisResult.Content = emotionResults[j].emotion.ToString();
-            Log(emotionResults[j].emotion.ToString());
+            analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() + 
+                "  Value: " + emotionResults[j].value.ToString();
+            Log("Detected emotion: " + emotionResults[j].emotion.ToString());
 
             bool found = false;
             while (!found && j >= emotionResults.Count - 3)
@@ -195,6 +195,7 @@ namespace MoodsicApp
                 {
                     found = true;
                 }
+                --j;
             }
 
             return res;

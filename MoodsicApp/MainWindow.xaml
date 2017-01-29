@@ -6,10 +6,10 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
-        Title="Moodsic" Height="350" Width="525" WindowState="Maximized">
+        Title="Moodsic" Height="600" Width="700" WindowState="Maximized">
 
     <Grid>
-        <DockPanel>
+        <DockPanel HorizontalAlignment="Center">
             <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
                 <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
                     <Grid.ColumnDefinitions>
@@ -35,8 +35,10 @@
                 </Grid>
             </DockPanel>
             <!-- Ratio: 1.332 -->
-            <cam:Webcam Grid.Column="0" Name="WebcamCtrl" Margin="10" Height="400" Width="533" />
-            <Label Name="analysisResult" />
+            <StackPanel DockPanel.Dock="Top" Margin="10">
+                <cam:Webcam Name="WebcamCtrl" Height="400" Width="533" />
+                <Label Name="analysisResult" Content="Detected emotion: "/>
+            </StackPanel>
         </DockPanel>
     </Grid>
 </Window>

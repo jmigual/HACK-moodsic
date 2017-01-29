@@ -1,6 +1,8 @@
-﻿namespace MoodsicApp
+﻿using System;
+
+namespace MoodsicApp
 {
-    struct DetectedResult
+    struct DetectedResult : IComparable<DetectedResult>
     {
         public Emotion emotion;
         public float value;
@@ -9,16 +11,6 @@
         {
             emotion = e;
             value = v;
-        }
-
-        public static bool operator <(DetectedResult res1, DetectedResult res2)
-        {
-            return res1.value < res2.value;
-        }
-        
-        public static bool operator >(DetectedResult res1, DetectedResult res2)
-        {
-            return res1.value > res2.value;
         }
 
         public Mood toMood()
@@ -42,6 +34,13 @@
 
             }
             return Mood.PEACEFUL;
+        }
+
+        public int CompareTo(DetectedResult other)
+        {
+            if (this.value < other.value) return -1;
+            if (this.value == other.value) return 0;
+            return 1;
         }
     }
 
