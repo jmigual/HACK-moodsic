@@ -7,7 +7,7 @@
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
         Title="Moodsic" Height="350" Width="525" WindowState="Maximized">
-    
+
     <Grid>
         <TabControl Name="tabs">
             <TabItem Name="tabCamera" Header="Camera">
@@ -34,7 +34,8 @@
                             <Button Grid.Column="2" Content="Take Snapshot" HorizontalAlignment="Center" x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
                         </Grid>
                     </DockPanel>
-                    <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <!-- Ratio: 1.332 -->
+                    <cam:Webcam Grid.Column="0" Name="WebcamCtrl" Margin="10" Height="400" Width="533" />
                 </DockPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>
