@@ -34,7 +34,7 @@ namespace MoodsicApp
         private const String m_videoPath = @"My Songs\";
         private bool m_firstPlay = true;
 
-        private const int m_maxEmotions = 5;
+        private const int m_maxEmotions = 3;
         private const int kInterval = 5000;
 
         public MainWindow()
@@ -64,6 +64,7 @@ namespace MoodsicApp
             VideoDevicesComboBox.SelectedIndex = 0;
 
             startCapturing();
+            scan();
         }
 
         private void startCapturing()
@@ -136,6 +137,7 @@ namespace MoodsicApp
             {
                 if (m_firstPlay)
                 {
+                    m_firstPlay = false;
                     DetectedResult emotion = getBestValue(m_averageEmotion);
                     Mood mood = emotion.toMood();
                     m_currentMood = mood;
@@ -191,7 +193,7 @@ namespace MoodsicApp
                 return;
             }
 
-            getBestValue(emotion);
+            getBestValue(emotion, true);
             CalcScores cScore = new CalcScores(emotion);
 
             int n = m_emotionsQueue.Count;
@@ -233,7 +235,7 @@ namespace MoodsicApp
         {
             
             // Select the biggest rectangle
-            if (emotionResult.Length <= 0 || emotionResult == null)
+            if (emotionResult == null || emotionResult.Length <= 0)
             { 
                 return null;
             }
@@ -255,7 +257,7 @@ namespace MoodsicApp
             return faceResult;
         }
 
-        private DetectedResult getBestValue(Scores faceResult)
+        private DetectedResult getBestValue(Scores faceResult, bool printInfo = false)
         {
             List<float> values = new List<float>(8);
 
@@ -277,9 +279,12 @@ namespace MoodsicApp
 
 
             int j = emotionResults.Count - 1;
-            analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() +
-                "\nValue: " + emotionResults[j].value.ToString();
-            Log("Detected emotion: " + emotionResults[j].emotion.ToString());
+            if (printInfo)
+            {
+                analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() +
+                    "\nValue: " + emotionResults[j].value.ToString();
+                Log("Detected emotion: " + emotionResults[j].emotion.ToString());
+            }
 
             DetectedResult res = new DetectedResult();
             bool found = false;
