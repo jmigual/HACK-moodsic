@@ -25,7 +25,7 @@ namespace MoodsicApp
         private String m_imagePath;
         private String m_picturesDefaultPath;
         private String m_apiKey = "1487efd373034a61b500849db503e8f1";
-        private Queue<String> m_songQueue;
+        private Queue<Track> m_songQueue;
         private Queue<CalcScores> m_emotionsQueue;
         private CalcScores m_averageEmotion;
         private Mood m_currentMood;
@@ -117,16 +117,18 @@ namespace MoodsicApp
 
         private void ResetPlaylist(Mood mood)
         {
+            m_songQueue = new Queue<Track>();
             Tuple<String, String>[] songs = SongLoader.GetMusic(((int)mood).ToString());
             String[] songIds = new String[songs.Length];
             for (int i = 0; i < songs.Length; ++i)
             {
-                songIds[i] = SongLoader.GetYoutubeId(songs[i].Item1 + " " + songs[i].Item2);
-                if (songIds[i] != null)
+                String s = SongLoader.GetYoutubeId(songs[i].Item1 + " " + songs[i].Item2);
+                if (s != null)
+                {
+                    m_songQueue.Enqueue(new Track(s, songs[i].Item1, songs[i].Item2));
                     SongLoader.DownloadVideo(songIds[i]);
+                }
             }
-
-            m_songQueue = new Queue<string>(songIds);
         }
 
         private async void scan()
