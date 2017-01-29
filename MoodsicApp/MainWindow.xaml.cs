@@ -83,7 +83,7 @@ namespace MoodsicApp
             // Take snapshot of webcam video.
             WebcamCtrl.TakeSnapshot();
             m_imagePath = m_picturesDefaultPath;
-            scanAndPlay();
+            //scanAndPlay();
         }
 
         private void pathButton_Click(object sender, RoutedEventArgs e)
@@ -140,23 +140,13 @@ namespace MoodsicApp
             {
                 m_averageEmotion = n*m_averageEmotion*(1/(n+1)) + cScore*(1/(n+1));
             }
-            else 
+            else
+            {
+                m_averageEmotion = m_averageEmotion + m_emotionsQueue.Peek()*(-1/n) + cScore * (1/n);
+                m_emotionsQueue.Dequeue();
+            }
                  
             m_emotionsQueue.Enqueue(cScore);
-        }
-
-        private async void scanAndPlay()
-        {
-            
-            Mood mood = emotion.toMood();
-
-            if (mood != m_currentMood)
-            {
-                m_currentMood = mood;
-                ResetPlaylist(mood);
-            }
-
-            
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
