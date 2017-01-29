@@ -28,7 +28,7 @@ namespace MoodsicApp
         private const String baseUrlUtube2mp3 = Utube2mp3Domain + "/widget/button/?video=https://www.youtube.com/watch?v=";
         private const String videoPath = "My Songs\\";
 
-        public static String[] GetMusic(String mood, String artist = null, String era = null, String genre = null)
+        public static Tuple<String, String>[] GetMusic(String mood, String artist = null, String era = null, String genre = null)
         {
             UriBuilder uriBuilder = new UriBuilder(baseUrl + "radio/create?client="
                 + clientId + "-" + clientKey + "&user=" + userId + "-" + userKey);
@@ -56,15 +56,15 @@ namespace MoodsicApp
 
             XmlNodeList tracks = doc.DocumentElement.SelectNodes("//TRACK");
 
-            String[] songs = new String[tracks.Count];
+            Tuple<String, String>[] songs = new Tuple<String, String>[tracks.Count];
             for (int i = 0; i < tracks.Count; ++i)
             {
                 XmlNode track = tracks.Item(i);
                 XmlNode titleNode, artistNode;
                 titleNode = track.SelectSingleNode("TITLE");
                 artistNode = track.SelectSingleNode("ARTIST");
-                songs[i] = (titleNode != null ? titleNode.InnerText : "")
-                    + " - " + (artistNode != null ? artistNode.InnerText : "");
+                songs[i] = new Tuple<string, string>(titleNode != null ? titleNode.InnerText : "",
+                artistNode != null ? artistNode.InnerText : "");
             }
 
             return songs;

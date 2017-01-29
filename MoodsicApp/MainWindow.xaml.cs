@@ -25,6 +25,8 @@ namespace MoodsicApp
         private String m_imagePath;
         private String m_picturesDefaultPath;
         private String m_apiKey = "1487efd373034a61b500849db503e8f1";
+        private String[] m_songQueue;
+        private Mood m_currentMood;
         private System.Windows.Forms.Timer m_timer;
 
         private const int kInterval = 5000;
@@ -106,6 +108,18 @@ namespace MoodsicApp
             scanAndPlay();
         }
 
+        private void UpdatePlaylist(Mood mood)
+        {
+            Tuple<String, String>[] songs = SongLoader.GetMusic(((int)mood).ToString());
+            String[] songIds = new String[songs.Length];
+            for (int i = 0; i < songs.Length; ++i)
+            {
+                songIds[i] = SongLoader.GetYoutubeId(songs[i].Item1 + " " + songs[i].Item2);
+                if (songIds[i] != null)
+                    SongLoader.DownloadVideo(songIds[i]);
+            }
+        }
+
         private async void scanAndPlay()
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
@@ -113,14 +127,13 @@ namespace MoodsicApp
             DetectedResult emotion = selectEmotion(emotionResult);
             Mood mood = emotion.toMood();
 
-            // Get 2nd API mood
-            String[] songs = SongLoader.GetMusic(((int)mood).ToString());
-            foreach (String song in songs)
+            if (mood != m_currentMood)
             {
-                String s = SongLoader.GetYoutubeId(song);
-                if (s != null)
-                    SongLoader.DownloadVideo(s);
+                m_currentMood = mood;
+                UpdatePlaylist(mood);
             }
+
+            
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
