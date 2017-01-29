@@ -6,29 +6,36 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
-        Title="Moodsic" Height="350" Width="525">
+        Title="Moodsic" Height="350" Width="525" WindowState="Maximized">
     
     <Grid>
         <TabControl Name="tabs">
             <TabItem Name="tabCamera" Header="Camera">
-                <StackPanel>
-                    <Label Content="Select an image"/>
-                    <WrapPanel>
-                        <TextBox Name="pathBox" />
-                        <Button Name="pathButton" Click="pathButton_Click">...</Button>
-                    </WrapPanel>
-
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Height="22">
-                        <TextBlock Height="22" Width="78" HorizontalAlignment="Left" VerticalAlignment="Top"
-                           Text="Video Device" TextAlignment="Left" FlowDirection="LeftToRight" />
-                        <ComboBox Height="22" Width="210" HorizontalAlignment="Left" VerticalAlignment="Top"
-                          x:Name="VideoDevicesComboBox" />
-                    </StackPanel>
-                    
-                    <Button Content="Take Snapshot" HorizontalAlignment="Center" 
-                     x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                        <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="150*" MaxWidth="200"/>
+                                <ColumnDefinition Width="30" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Select an image"/>
+                            <TextBox Grid.Column="1" Name="pathBox" Margin="10,0"/>
+                            <Button Grid.Column="2" Name="pathButton" Click="pathButton_Click" HorizontalAlignment="Stretch" >...</Button>
+                        </Grid>
+                        <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="1*" />
+                            </Grid.ColumnDefinitions>
+                            <Label Content="Video Device" />
+                            <ComboBox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="VideoDevicesComboBox" Margin="10,0"/>
+                            <Button Grid.Column="2" Content="Take Snapshot" HorizontalAlignment="Center" x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
+                        </Grid>
+                    </DockPanel>
                     <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                </StackPanel>
+                </DockPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>
             <TabItem Header="Console">
