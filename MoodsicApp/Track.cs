@@ -12,6 +12,11 @@ namespace MoodsicApp
         public String title { get; set; }
         public String artist { get; set; }
 
-        public Track(String id, String title = "", String artist = "") { }
+        public Track(String id, String title = "", String artist = "")
+        {
+            this.id = id;
+            this.title = title;
+            this.artist = artist;
+        }
     }
 }
