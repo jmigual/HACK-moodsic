@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls.Primitives;
 using System.Collections.Generic;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
@@ -30,6 +31,8 @@ namespace MoodsicApp
         private Mood m_currentMood;
         private System.Windows.Forms.Timer m_timer;
         private WindowsMediaPlayer m_player;
+        private const String m_videoPath = @"My Songs\";
+        private bool m_firstPlay = true;
 
         private const int m_maxEmotions = 5;
         private const int kInterval = 5000;
@@ -89,34 +92,14 @@ namespace MoodsicApp
             scan();
         }
 
-        private void pathButton_Click(object sender, RoutedEventArgs e)
-        {
-            OpenFileDialog dialog = new OpenFileDialog();
-            dialog.Filter = "Images|*.jpg;*.png";
-
-            bool? result = dialog.ShowDialog(this);
-
-            if (!(bool) result)
-            {
-                return;
-            }
-
-            m_imagePath = dialog.FileName;
-            this.pathBox.Text = m_imagePath;
-            scan();
-        }
-
         // Called every 5 seconds
         private void Timer_handle(object sender, EventArgs e)
         {
             IWMPControls controls = m_player.controls;
 
-            if ((bool) useWebcam.IsChecked)
-            {
-                WebcamCtrl.TakeSnapshot();
-                m_imagePath = m_picturesDefaultPath;
-                scan();
-            }
+            WebcamCtrl.TakeSnapshot();
+            m_imagePath = m_picturesDefaultPath;
+            scan();
 
             // We need to check if the mood needs to be switched
             if (controls.currentItem != null &&
@@ -136,23 +119,54 @@ namespace MoodsicApp
                controls.currentItem.duration - controls.currentPosition < 2.0)
             {
                 Track track = m_songQueue.Dequeue();
-                m_player.URL = track.id;
+                m_player.URL = m_videoPath + track.id + ".mp3";
+                m_songQueue.Enqueue(track);
                 // Box with artist and title track.artist and track.sonh
             }
+        }
+
+        void Play(object sender, RoutedEventArgs args)
+        {
+            ToggleButton tb = (ToggleButton)sender;
+            Console.WriteLine((bool)tb.IsChecked);
+            if ((bool)tb.IsChecked)
+            {
+                if (m_firstPlay)
+                {
+                    DetectedResult emotion = getBestValue(m_averageEmotion);
+                    Mood mood = emotion.toMood();
+                    m_currentMood = mood;
+                    ResetPlaylist(mood);
+                    Track track = m_songQueue.Dequeue();
+                    m_player.URL = m_videoPath + track.id + ".mp3";
+                    m_songQueue.Enqueue(track);
+                }
+                m_player.controls.play();
+            }
+            else
+            {
+                m_player.controls.pause();
+            }
+        }
+        void Next(object sender, RoutedEventArgs args)
+        {
+            m_player.controls.stop();
+            Track track = m_songQueue.Dequeue();
+            m_player.URL = m_videoPath + track.id + ".mp3";
+            m_songQueue.Enqueue(track);
         }
 
         private void ResetPlaylist(Mood mood)
         {
             m_songQueue = new Queue<Track>();
             Tuple<String, String>[] songs = SongLoader.GetMusic(((int)mood).ToString());
-            String[] songIds = new String[songs.Length];
             for (int i = 0; i < songs.Length; ++i)
             {
                 String s = SongLoader.GetYoutubeId(songs[i].Item1 + " " + songs[i].Item2);
                 if (s != null)
                 {
                     m_songQueue.Enqueue(new Track(s, songs[i].Item1, songs[i].Item2));
-                    SongLoader.DownloadVideo(songIds[i]);
+                    SongLoader.DownloadVideo(s);
                 }
             }
         }
@@ -164,7 +178,7 @@ namespace MoodsicApp
             Scores emotion = selectEmotion(emotionResult);
             if (emotion == null)
             {
-                analysisResult.Content = "Detected emotion: no emotion detected";
+                analysisResult.Content = "No emotion detected";
                 return;
             }
 
@@ -255,7 +269,7 @@ namespace MoodsicApp
 
             int j = emotionResults.Count - 1;
             analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() +
-                "  Value: " + emotionResults[j].value.ToString();
+                "\nValue: " + emotionResults[j].value.ToString();
             Log("Detected emotion: " + emotionResults[j].emotion.ToString());
 
             DetectedResult res = new DetectedResult();

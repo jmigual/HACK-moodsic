@@ -6,38 +6,104 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
-        Title="Moodsic" Height="600" Width="700" WindowState="Maximized">
+        Title="Moodsic" Height="600" Width="670" WindowStartupLocation="CenterScreen">
+    <Window.Resources>
+        <Style x:Key="button_style" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
 
-    <Grid>
-        <DockPanel HorizontalAlignment="Center">
-            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="150*" MaxWidth="200"/>
-                        <ColumnDefinition Width="30" />
-                        <ColumnDefinition Width="Auto" />
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Select an image"/>
-                    <TextBox Grid.Column="1" Name="pathBox" Margin="10,0"/>
-                    <Button Grid.Column="2" Name="pathButton" Click="pathButton_Click" HorizontalAlignment="Stretch" Margin="0,0,10,0" >...</Button>
-                    <CheckBox Grid.Column="3" Name="useWebcam" VerticalAlignment="Center">Use webcam</CheckBox>
-                </Grid>
-                <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition Width="1*" />
-                    </Grid.ColumnDefinitions>
-                    <Label Content="Video Device" />
-                    <ComboBox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="VideoDevicesComboBox" Margin="10,0"/>
-                    <Button Grid.Column="2" Content="Take Snapshot" HorizontalAlignment="Center" x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
-                </Grid>
-            </DockPanel>
-            <!-- Ratio: 1.332 -->
-            <StackPanel DockPanel.Dock="Top" Margin="10">
-                <cam:Webcam Name="WebcamCtrl" Height="400" Width="533" />
-                <Label Name="analysisResult" Content="Detected emotion: "/>
+        <Style x:Key="button_tog_style" TargetType="{x:Type ToggleButton}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ToggleButton}">
+                        <Border Background="{TemplateBinding Background}" BorderBrush="Black" BorderThickness="0">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="Transparent"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="0" ShowGridLines="False">
+        <Grid.Background>
+            <ImageBrush ImageSource="/images/wood.png" Stretch="UniformToFill"/>
+        </Grid.Background>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="60" />
+        </Grid.RowDefinitions>
+
+        <!-- Camera -->
+        <DockPanel LastChildFill="True" Grid.Row="0">
+            <!-- Volume -->
+            <Slider
+                    x:Name="TheSlider"
+                    Minimum="0"
+                    Maximum="300"
+                    LargeChange="1"
+                    DockPanel.Dock="Bottom"
+                    Width="Auto"
+                    Height="10"
+                    VerticalAlignment="Center" />
+            <cam:Webcam Name="WebcamCtrl" Height="Auto" Width="Auto" Margin="7,10,7,0"/>
+        </DockPanel>
+
+        <!-- Playback controls -->
+        <DockPanel LastChildFill="True" Grid.Row="1">
+            <!-- Now Playing -->
+            <StackPanel DockPanel.Dock="Left">
+                <Label Content="Video Device" />
+                <ComboBox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="VideoDevicesComboBox" Margin="10,0"/>
+            </StackPanel>
+            <StackPanel DockPanel.Dock="Right">
+                <Button Grid.Column="2" Content="Take Snapshot" HorizontalAlignment="Center" x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
+                <Label DockPanel.Dock="Left" Name="analysisResult" Content="Detected emotion: "/>
+            </StackPanel>
+
+            <StackPanel
+                VerticalAlignment="Center"
+                HorizontalAlignment="Center"
+                Orientation="Horizontal"
+                Background="Transparent">
+
+                <!-- Play -->
+                <ToggleButton
+                    Style="{StaticResource button_tog_style}"   
+                    Width="50" Height="50"
+                    Margin="4,0,4,0"
+                    VerticalAlignment="Center"
+                    Click="Play"
+                    Background="Transparent">
+                    <Image Source="/images/play.png"/>
+                </ToggleButton>
+
+                <Button
+                    Style="{StaticResource button_style}"
+                    Width="35" Height="35"
+                    Margin="4,0,4,0"
+                    VerticalAlignment="Center"
+                    Click="Next"
+                    Background="Transparent">
+                    <Image Source="/images/next.png"/>
+                </Button>
             </StackPanel>
         </DockPanel>
     </Grid>

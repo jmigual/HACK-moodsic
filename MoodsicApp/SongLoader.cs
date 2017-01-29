@@ -92,7 +92,12 @@ namespace MoodsicApp
 
             dynamic jsonObj = JsonConvert.DeserializeObject(jsonString);
 
-            if (jsonObj.items.Count == 0) return null;
+            if (jsonObj.items.Count == 0)
+            {
+                Console.WriteLine("Id of the video: null (not found)");
+                return null;
+            }
+            Console.WriteLine("Id of the video: " + jsonObj.items[0].id.videoId);
             return jsonObj.items[0].id.videoId;
         }
 
@@ -105,6 +110,7 @@ namespace MoodsicApp
             WebClient client = new WebClient();
 
             String buttonUri = baseUrlUtube2mp3 + videoId;
+            Console.WriteLine("Downloading button URI: " + buttonUri);
             string htmlCode = client.DownloadString(buttonUri);
             HtmlDocument htmlDoc = new HtmlDocument();
             htmlDoc.LoadHtml(htmlCode);

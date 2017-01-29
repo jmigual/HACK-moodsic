@@ -44,7 +44,7 @@
     </Window.Resources>
     <Grid Margin="0" ShowGridLines="False">
         <Grid.Background>
-            <ImageBrush ImageSource="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\wood.png" Stretch="UniformToFill"/>
+            <ImageBrush ImageSource="/images/wood.png" Stretch="UniformToFill"/>
         </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -54,16 +54,6 @@
         <!-- Camera -->
         <DockPanel LastChildFill="True" Grid.Row="0">
             <!-- Volume -->
-            <Slider
-                    x:Name="TheSlider"
-                    Minimum="0"
-                    Maximum="300"
-                    LargeChange="1"
-                    DockPanel.Dock="Bottom"
-                    ValueChanged="Slider_ValueChanged"
-                    Width="Auto"
-                    Height="10"
-                    VerticalAlignment="Center" />
             <Rectangle
             Width="Auto"
             Margin="0,0,0,3"
@@ -91,7 +81,7 @@
                 Orientation="Horizontal"
                 Background="Transparent">
 
-                    <!-- Play -->
+                <!-- Play -->
                 <ToggleButton
                     Style="{StaticResource button_tog_style}"   
                     Width="50" Height="50"
@@ -99,7 +89,7 @@
                     VerticalAlignment="Center"
                     Click="Play"
                     Background="Transparent">
-                    <Image Source="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\play.png"/>
+                    <Image Source="/images/play.png"/>
                 </ToggleButton>
 
                 <Button
@@ -109,7 +99,7 @@
                     VerticalAlignment="Center"
                     Click="Next"
                     Background="Transparent">
-                    <Image Source="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\next.png"/>
+                    <Image Source="/images/next.png"/>
                 </Button>
             </StackPanel>
         </DockPanel>
