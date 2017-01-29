@@ -86,7 +86,7 @@ namespace MoodsicApp
             // Take snapshot of webcam video.
             WebcamCtrl.TakeSnapshot();
             m_imagePath = m_picturesDefaultPath;
-            //scanAndPlay();
+            scan();
         }
 
         private void pathButton_Click(object sender, RoutedEventArgs e)
@@ -162,6 +162,13 @@ namespace MoodsicApp
             Emotion[] emotionResult = await UploadAndDetectEmotions();
             LogEmotionResult(emotionResult);
             Scores emotion = selectEmotion(emotionResult);
+            if (emotion == null)
+            {
+                analysisResult.Content = "Detected emotion: no emotion detected";
+                return;
+            }
+
+            getBestValue(emotion);
             CalcScores cScore = new CalcScores(emotion);
 
             int n = m_emotionsQueue.Count;

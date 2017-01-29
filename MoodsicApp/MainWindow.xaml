@@ -1,4 +1,4 @@
-﻿<Window x:Class="MoodsicApp.MainWindow"
+<Window x:Class="MoodsicApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl" 
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
