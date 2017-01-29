@@ -41,7 +41,7 @@
                     return Mood.STIRRING;
 
             }
-            return null;
+            return Mood.PEACEFUL;
         }
     }
 
