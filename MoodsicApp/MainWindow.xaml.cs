@@ -3,7 +3,6 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Collections.Generic;
-using System.Windows.Media;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
@@ -13,7 +12,7 @@ using WebcamControl;
 
 using System.Windows.Controls;
 using System.Windows.Data;
-
+using WMPLib;
 
 namespace MoodsicApp
 {
@@ -30,8 +29,9 @@ namespace MoodsicApp
         private CalcScores m_averageEmotion;
         private Mood m_currentMood;
         private System.Windows.Forms.Timer m_timer;
-        private const int m_maxEmotions = 5;
+        private WindowsMediaPlayer m_player;
 
+        private const int m_maxEmotions = 5;
         private const int kInterval = 5000;
 
         public MainWindow()
@@ -41,6 +41,9 @@ namespace MoodsicApp
 
             m_emotionsQueue = new Queue<CalcScores>();
             m_averageEmotion = new CalcScores();
+            m_player = new WindowsMediaPlayer();
+            
+            m_player.settings.autoStart = false;
 
             Binding binding_1 = new Binding("SelectedValue");
             binding_1.Source = VideoDevicesComboBox;
@@ -100,18 +103,37 @@ namespace MoodsicApp
 
             m_imagePath = dialog.FileName;
             this.pathBox.Text = m_imagePath;
-            scanAndPlay();
+            scan();
         }
 
+        // Called every 5 seconds
         private void Timer_handle(object sender, EventArgs e)
         {
-            if (!(bool) this.useWebcam.IsChecked)
+            IWMPControls controls = m_player.controls;
+
+            if ((bool) useWebcam.IsChecked)
             {
-                return;
+                WebcamCtrl.TakeSnapshot();
+                m_imagePath = m_picturesDefaultPath;
+                scan();
             }
-            WebcamCtrl.TakeSnapshot();
-            m_imagePath = m_picturesDefaultPath;
-            scanAndPlay();
+
+            // We need to check if the mood needs to be switched
+            if (controls.currentItem.duration - controls.currentPosition < 10.0)
+            {
+                DetectedResult emotion = getBestValue(m_averageEmotion);
+                Mood mood = emotion.toMood();
+
+                if (mood != m_currentMood)
+                {
+                    ResetPlaylist(mood);
+                }
+            }
+
+            if (controls.currentItem.duration - controls.currentPosition < 2.0)
+            {
+                m_player.URL = ggg;
+            }
         }
 
         private void ResetPlaylist(Mood mood)
@@ -140,23 +162,9 @@ namespace MoodsicApp
             {
                 m_averageEmotion = n*m_averageEmotion*(1/(n+1)) + cScore*(1/(n+1));
             }
-            else 
+            //else 
                  
-            m_emotionsQueue.Enqueue(cScore);
-        }
-
-        private async void scanAndPlay()
-        {
-            
-            Mood mood = emotion.toMood();
-
-            if (mood != m_currentMood)
-            {
-                m_currentMood = mood;
-                ResetPlaylist(mood);
-            }
-
-            
+            //m_emotionsQueue.Enqueue(cScore);
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
