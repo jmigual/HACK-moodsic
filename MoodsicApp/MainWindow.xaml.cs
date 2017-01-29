@@ -100,7 +100,7 @@ namespace MoodsicApp
 
             m_imagePath = dialog.FileName;
             this.pathBox.Text = m_imagePath;
-            scanAndPlay();
+            //scanAndPlay();
         }
 
         private void Timer_handle(object sender, EventArgs e)
@@ -111,7 +111,8 @@ namespace MoodsicApp
             }
             WebcamCtrl.TakeSnapshot();
             m_imagePath = m_picturesDefaultPath;
-            scanAndPlay();
+            //scanAndPlay();
+            scan();
         }
 
         private void ResetPlaylist(Mood mood)
@@ -147,6 +148,20 @@ namespace MoodsicApp
             }
                  
             m_emotionsQueue.Enqueue(cScore);
+
+            Mood mood = (getBestValue(emotion)).toMood();
+            
+            if (mood != m_currentMood)
+            {
+                m_currentMood = mood;
+                ResetPlaylist(mood);
+            }
+            else
+            {   
+                m_averageEmotion = m_averageEmotion + m_emotionsQueue.Peek() * (-1 / n) + cScore * (1 / n);
+                m_emotionsQueue.Dequeue();
+            }
+
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
