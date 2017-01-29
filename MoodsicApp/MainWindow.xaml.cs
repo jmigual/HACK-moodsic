@@ -25,9 +25,12 @@ namespace MoodsicApp
         private String m_imagePath;
         private String m_picturesDefaultPath;
         private String m_apiKey = "1487efd373034a61b500849db503e8f1";
-        private String[] m_songQueue;
+        private Queue<String> m_songQueue;
+        private Queue<CalcScores> m_emotionsQueue;
+        private CalcScores m_averageEmotion;
         private Mood m_currentMood;
         private System.Windows.Forms.Timer m_timer;
+        private const int m_maxEmotions = 5;
 
         private const int kInterval = 5000;
 
@@ -35,6 +38,9 @@ namespace MoodsicApp
         {
             m_imagePath = "";
             InitializeComponent();
+
+            m_emotionsQueue = new Queue<CalcScores>();
+            m_averageEmotion = new CalcScores();
 
             Binding binding_1 = new Binding("SelectedValue");
             binding_1.Source = VideoDevicesComboBox;
@@ -108,7 +114,7 @@ namespace MoodsicApp
             scanAndPlay();
         }
 
-        private void UpdatePlaylist(Mood mood)
+        private void ResetPlaylist(Mood mood)
         {
             Tuple<String, String>[] songs = SongLoader.GetMusic(((int)mood).ToString());
             String[] songIds = new String[songs.Length];
@@ -118,19 +124,36 @@ namespace MoodsicApp
                 if (songIds[i] != null)
                     SongLoader.DownloadVideo(songIds[i]);
             }
+
+            m_songQueue = new Queue<string>(songIds);
+        }
+
+        private async void scan()
+        {
+            Emotion[] emotionResult = await UploadAndDetectEmotions();
+            LogEmotionResult(emotionResult);
+            Scores emotion = selectEmotion(emotionResult);
+            CalcScores cScore = new CalcScores(emotion);
+
+            int n = m_emotionsQueue.Count;
+            if (m_emotionsQueue.Count < m_maxEmotions)
+            {
+                m_averageEmotion = n*m_averageEmotion*(1/(n+1)) + cScore*(1/(n+1));
+            }
+            else 
+                 
+            m_emotionsQueue.Enqueue(cScore);
         }
 
         private async void scanAndPlay()
         {
-            Emotion[] emotionResult = await UploadAndDetectEmotions();
-            LogEmotionResult(emotionResult);
-            DetectedResult emotion = selectEmotion(emotionResult);
+            
             Mood mood = emotion.toMood();
 
             if (mood != m_currentMood)
             {
                 m_currentMood = mood;
-                UpdatePlaylist(mood);
+                ResetPlaylist(mood);
             }
 
             
@@ -158,16 +181,13 @@ namespace MoodsicApp
             }
         }
 
-        private DetectedResult selectEmotion(Emotion[] emotionResult)
+        private Scores selectEmotion(Emotion[] emotionResult)
         {
-            DetectedResult res = new DetectedResult();
             
             // Select the biggest rectangle
             if (emotionResult.Length <= 0 || emotionResult == null)
-            {
-                res.emotion = EmotionEnum.NONE;
-                res.value = -1;
-                return res;
+            { 
+                return null;
             }
 
             Scores faceResult = null;
@@ -184,6 +204,11 @@ namespace MoodsicApp
                 }
             }
 
+            return faceResult;
+        }
+
+        private DetectedResult getBestValue(Scores faceResult)
+        {
             List<float> values = new List<float>(8);
 
             values.Add(faceResult.Anger);
@@ -204,15 +229,16 @@ namespace MoodsicApp
 
 
             int j = emotionResults.Count - 1;
-            analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() + 
+            analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() +
                 "  Value: " + emotionResults[j].value.ToString();
             Log("Detected emotion: " + emotionResults[j].emotion.ToString());
 
+            DetectedResult res = new DetectedResult();
             bool found = false;
             while (!found && j >= emotionResults.Count - 3)
             {
                 res = emotionResults[j];
-                if (res.emotion != EmotionEnum.CONTEMPT && res.emotion != EmotionEnum.DISGUST && 
+                if (res.emotion != EmotionEnum.CONTEMPT && res.emotion != EmotionEnum.DISGUST &&
                     res.emotion != EmotionEnum.FEAR)
                 {
                     found = true;

@@ -1,4 +1,5 @@
 ﻿using System;
+using Microsoft.ProjectOxford.Emotion.Contract;
 
 namespace MoodsicApp
 {
@@ -42,6 +43,72 @@ namespace MoodsicApp
             if (this.value == other.value) return 0;
             return 1;
         }
+    }
+
+    class CalcScores : Scores
+    {
+        public CalcScores() : base() { }
+        public CalcScores(Scores other)
+        { 
+            Anger = other.Anger;
+            Contempt = other.Contempt;
+            Disgust = other.Disgust;
+            Fear = other.Fear;
+            Happiness = other.Happiness;
+            Neutral = other.Neutral;
+            Sadness = other.Sadness;
+            Surprise = other.Surprise;
+        }
+
+        public static CalcScores operator*(float value, CalcScores other)
+        {
+            other.Anger *= value;
+            other.Contempt *= value;
+            other.Disgust *= value;
+            other.Fear *= value;
+            other.Happiness *= value;
+            other.Neutral *= value;
+            other.Sadness *= value;
+            other.Surprise *= value;
+            return other;
+        }
+
+        public static CalcScores operator*(CalcScores other, float value)
+        {
+            return value*other;
+        }
+
+        public static CalcScores operator+(float value, CalcScores other)
+        {
+            other.Anger += value;
+            other.Contempt += value;
+            other.Disgust += value;
+            other.Fear += value;
+            other.Happiness += value;
+            other.Neutral += value;
+            other.Sadness += value;
+            other.Surprise += value;
+            return other;
+        }
+
+        public static CalcScores operator+(CalcScores other, float value)
+        {
+            return value + other;
+        }
+
+        public static CalcScores operator+(CalcScores c1, CalcScores c2)
+        {
+            c1.Anger += c2.Anger;
+            c1.Contempt += c2.Contempt;
+            c1.Disgust += c2.Disgust;
+            c1.Fear += c2.Fear;
+            c1.Happiness += c2.Happiness;
+            c1.Neutral += c2.Neutral;
+            c1.Sadness += c2.Sadness;
+            c1.Surprise += c2.Surprise;
+            return c1;
+        }
+
     }
 
     enum EmotionEnum
