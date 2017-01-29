@@ -6,7 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
-        Title="Moodsic" Height="350" Width="525">
+        Title="Moodsic" Height="563" Width="525"
+        WindowState="Maximized">
     
     <Grid>
         <TabControl Name="tabs">
@@ -22,12 +23,14 @@
                         <TextBlock Height="22" Width="78" HorizontalAlignment="Left" VerticalAlignment="Top"
                            Text="Video Device" TextAlignment="Left" FlowDirection="LeftToRight" />
                         <ComboBox Height="22" Width="210" HorizontalAlignment="Left" VerticalAlignment="Top"
-                          x:Name="VideoDevicesComboBox" />
+                          x:Name="VideoDevicesComboBox" >
+                        </ComboBox>
                     </StackPanel>
                     
                     <Button Content="Take Snapshot" HorizontalAlignment="Center" 
                      x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
-                    <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    <cam:Webcam Name="WebcamCtrl" Margin="10" HorizontalAlignment="Stretch"
+                      VerticalAlignment="Stretch" Height="400" Width="533" /> <!-- Ratio: 1.332 -->
                 </StackPanel>
             </TabItem>
             <TabItem Header="Result"></TabItem>
