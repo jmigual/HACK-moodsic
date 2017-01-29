@@ -142,7 +142,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="images\play_pause.png" />
+    <Resource Include="images\play_play.png" />
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\WebcamControl\WebcamControl.vbproj">
       <Project>{72108e55-77ec-4c0c-9b6f-a5d882726a6b}</Project>

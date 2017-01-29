@@ -39,6 +39,20 @@
                 <Trigger Property="IsMouseOver" Value="True">
                     <Setter Property="Background" Value="Transparent"/>
                 </Trigger>
+                <Trigger Property="IsChecked" Value="True">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Source="/images/play_pause.png" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="IsChecked" Value="False">
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <Image Source="/images/play_play.png" />
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
@@ -87,13 +101,14 @@
                 <!-- Play -->
                 <ToggleButton
                     Style="{StaticResource button_tog_style}"   
-                    Width="50" Height="50"
+                    Width="35" Height="35"
                     Margin="4,0,4,0"
                     VerticalAlignment="Center"
                     Click="Play"
-                    Background="Transparent">
-                    <Image Source="/images/play.png"/>
-                </ToggleButton>
+                    Background="Transparent" 
+                    IsChecked="{Binding Status}"
+                    />
+
 
                 <Button
                     Style="{StaticResource button_style}"
