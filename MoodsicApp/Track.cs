@@ -8,10 +8,10 @@ namespace MoodsicApp
 {
     class Track
     {
-        String id { get; set; }
-        String title { get; set; }
-        String artist { get; set; }
+        public String id { get; set; }
+        public String title { get; set; }
+        public String artist { get; set; }
 
-        public Track (String id, String title = "", String artist = "");
+        public Track(String id, String title = "", String artist = "") { }
     }
 }

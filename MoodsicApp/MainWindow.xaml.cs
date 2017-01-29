@@ -119,7 +119,8 @@ namespace MoodsicApp
             }
 
             // We need to check if the mood needs to be switched
-            if (controls.currentItem.duration - controls.currentPosition < 10.0)
+            if (controls.currentItem != null &&
+                controls.currentItem.duration - controls.currentPosition < 10.0)
             {
                 DetectedResult emotion = getBestValue(m_averageEmotion);
                 Mood mood = emotion.toMood();
@@ -130,9 +131,12 @@ namespace MoodsicApp
                 }
             }
 
-            if (controls.currentItem.duration - controls.currentPosition < 2.0)
+            if (controls.currentItem != null &&
+               controls.currentItem.duration - controls.currentPosition < 2.0)
             {
-                //m_player.URL = ggg;
+                Track track = m_songQueue.Dequeue();
+                m_player.URL = track.id;
+                // Box with artist and title track.artist and track.sonh
             }
         }
 
