@@ -13,7 +13,7 @@
         <TabControl Name="tabs">
             <TabItem Name="tabCamera" Header="Camera">
                 <StackPanel>
-                    <Label Content="Select an image" Height="100" Width="100"/>
+                    <Label Content="Select an image"/>
                     <WrapPanel>
                         <TextBox Name="pathBox" />
                         <Button Name="pathButton" Click="pathButton_Click">...</Button>
