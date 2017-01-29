@@ -41,6 +41,7 @@ namespace MoodsicApp
             m_picturesDefaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
             WebcamCtrl.ImageDirectory = m_picturesDefaultPath;
+            m_picturesDefaultPath += @"\snapshot.jpg";
             WebcamCtrl.FrameRate = 30;
             WebcamCtrl.FrameSize = new System.Drawing.Size(640, 480);
 
