@@ -22,8 +22,8 @@ We used **Microsoft's Cognitive API*** for the facial recognition and a .NET env
 
 ## What's next for Moodsic
 Ordered from easier to harder to implement:
-Allow the user to choose the genre, era, or artist they want to listen to if they want something more specific.
-Use a personal library of music combined with Internet-retrieved music.
-Improve the parallelism of the application for the downloads to avoid making the user wait.
-Use ML to better predict what the user wants to listen to. We've thought of a neuronal network with user's mood as input and the track's _mood_ and genre as outputs.
-Improve the UI. (sorry not fans of front-end)
+- Allow the user to choose the genre, era, or artist they want to listen to if they want something more specific.
+- Use a personal library of music combined with Internet-retrieved music.
+- Improve the parallelism of the application for the downloads to avoid making the user wait.
+- Use ML to better predict what the user wants to listen to. We've thought of a neuronal network with user's mood as input and the track's _mood_ and genre as outputs.
+- Improve the UI. (sorry not fans of front-end)
