@@ -167,7 +167,6 @@ namespace MoodsicApp
                 m_averageEmotion = m_averageEmotion + m_emotionsQueue.Peek()*(-1/n) + cScore * (1/n);
                 m_emotionsQueue.Dequeue();
             }
-                 
             m_emotionsQueue.Enqueue(cScore);
         }
 
