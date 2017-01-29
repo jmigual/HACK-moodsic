@@ -108,13 +108,22 @@ namespace MoodsicApp
 
         private async void scanAndPlay()
         {
-            Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotionResult = await UploadAndDetectEmotions();
+            Emotion[] emotionResult = await UploadAndDetectEmotions();
             LogEmotionResult(emotionResult);
             DetectedResult emotion = selectEmotion(emotionResult);
             Mood mood = emotion.toMood();
+
+            // Get 2nd API mood
+            String[] songs = SongLoader.GetMusic(((int)mood).ToString());
+            foreach (String song in songs)
+            {
+                String s = SongLoader.GetYoutubeId(song);
+                if (s != null)
+                    SongLoader.DownloadVideo(s);
+            }
         }
 
-        private async Task<Microsoft.ProjectOxford.Emotion.Contract.Emotion[]> UploadAndDetectEmotions()
+        private async Task<Emotion[]> UploadAndDetectEmotions()
         {
             Log("Using " + m_imagePath + " file");
 
@@ -136,21 +145,21 @@ namespace MoodsicApp
             }
         }
 
-        private DetectedResult selectEmotion(Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotionResult)
+        private DetectedResult selectEmotion(Emotion[] emotionResult)
         {
             DetectedResult res = new DetectedResult();
             
             // Select the biggest rectangle
             if (emotionResult.Length <= 0 || emotionResult == null)
             {
-                res.emotion = Emotion.NONE;
+                res.emotion = EmotionEnum.NONE;
                 res.value = -1;
                 return res;
             }
 
             Scores faceResult = null;
             int space = -1;
-            foreach(Microsoft.ProjectOxford.Emotion.Contract.Emotion emotion in emotionResult)
+            foreach(Emotion emotion in emotionResult)
             {
                 Rectangle fRect = emotion.FaceRectangle;
                 int auxSpace = fRect.Width + fRect.Height;
@@ -176,7 +185,7 @@ namespace MoodsicApp
             List<DetectedResult> emotionResults = new List<DetectedResult>(values.Count);
             for (int i = 0; i < values.Count; ++i)
             {
-                emotionResults.Add(new DetectedResult((Emotion)(i + 1), values[i]));
+                emotionResults.Add(new DetectedResult((EmotionEnum)(i + 1), values[i]));
             }
             emotionResults.Sort();
 
@@ -190,8 +199,8 @@ namespace MoodsicApp
             while (!found && j >= emotionResults.Count - 3)
             {
                 res = emotionResults[j];
-                if (res.emotion != Emotion.CONTEMPT && res.emotion != Emotion.DISGUST && 
-                    res.emotion != Emotion.FEAR)
+                if (res.emotion != EmotionEnum.CONTEMPT && res.emotion != EmotionEnum.DISGUST && 
+                    res.emotion != EmotionEnum.FEAR)
                 {
                     found = true;
                 }
@@ -206,7 +215,7 @@ namespace MoodsicApp
             Console.WriteLine(text);
         }
 
-        private void LogEmotionResult(Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotions)
+        private void LogEmotionResult(Emotion[] emotions)
         {
             int emotionResultCount = 0;
             if (emotions == null || emotions.Length <= 0)
@@ -218,7 +227,7 @@ namespace MoodsicApp
                     "    or other factors");
                 return;
             }
-            foreach (Microsoft.ProjectOxford.Emotion.Contract.Emotion emotion in emotions)
+            foreach (Emotion emotion in emotions)
             {
                 Log("Emotion[" + emotionResultCount + "]");
                 Log("  .FaceRectangle = left: " + emotion.FaceRectangle.Left
