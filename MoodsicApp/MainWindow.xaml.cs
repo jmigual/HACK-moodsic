@@ -2,10 +2,12 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Collections.Generic;
 using System.Windows.Media;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
+using Microsoft.ProjectOxford.Common;
 using Microsoft.Win32;
 using WebcamControl;
 
@@ -24,7 +26,6 @@ namespace MoodsicApp
         private String m_picturesDefaultPath;
         private String m_apiKey = "1487efd373034a61b500849db503e8f1";
         private System.Windows.Forms.Timer m_timer;
-        private int m_counter = 0;
 
         private const int kInterval = 5000;
 
@@ -106,16 +107,18 @@ namespace MoodsicApp
 
         private async void scanAndPlay()
         {
-            Emotion[] emotionResult = await UploadAndDetectEmotions();
-            this.LogEmotionResult(emotionResult);
+            Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotionResult = await UploadAndDetectEmotions();
+            LogEmotionResult(emotionResult);
+            DetectedResult emotion = selectEmotion(emotionResult);
+            Mood mood = emotion.toMood();
         }
 
-        private async Task<Emotion[]> UploadAndDetectEmotions()
+        private async Task<Microsoft.ProjectOxford.Emotion.Contract.Emotion[]> UploadAndDetectEmotions()
         {
-            this.Log("Using " + m_imagePath + " file");
+            Log("Using " + m_imagePath + " file");
 
             EmotionServiceClient client = new EmotionServiceClient(m_apiKey);
-            this.Log("Calling EmotionServiceClient.RecognizeAsync()...");
+            Log("Calling EmotionServiceClient.RecognizeAsync()...");
 
             try
             {
@@ -132,12 +135,76 @@ namespace MoodsicApp
             }
         }
 
+        private DetectedResult selectEmotion(Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotionResult)
+        {
+            DetectedResult res = new DetectedResult();
+            
+            // Select the biggest rectangle
+            if (emotionResult.Length <= 0 || emotionResult == null)
+            {
+                res.emotion = Emotion.NONE;
+                res.value = -1;
+                return res;
+            }
+
+            Scores faceResult = null;
+            int space = -1;
+            foreach(Microsoft.ProjectOxford.Emotion.Contract.Emotion emotion in emotionResult)
+            {
+                Rectangle fRect = emotion.FaceRectangle;
+                int auxSpace = fRect.Width + fRect.Height;
+
+                if (auxSpace > space)
+                {
+                    space = auxSpace;
+                    faceResult = emotion.Scores;
+                }
+            }
+
+            Emotion result = Emotion.ANGER;
+            List<float> values = new List<float>(8);
+
+            values[0] = faceResult.Anger;
+            values[1] = faceResult.Contempt;
+            values[2] = faceResult.Disgust;
+            values[3] = faceResult.Fear;
+            values[4] = faceResult.Happiness;
+            values[5] = faceResult.Neutral;
+            values[6] = faceResult.Sadness;
+            values[7] = faceResult.Surprise;
+
+            List<DetectedResult> emotionResults = new List<DetectedResult>(values.Count);
+            for (int i = 0; i < values.Count; ++i)
+            {
+                emotionResults[i] = new DetectedResult((Emotion)i, values[i]);
+            }
+            emotionResults.Sort();
+
+
+            int j = emotionResults.Count - 1;
+            analysisResult.Content = emotionResults[j].emotion.ToString();
+            Log(emotionResults[j].emotion.ToString());
+
+            bool found = false;
+            while (!found && j >= emotionResults.Count - 3)
+            {
+                res = emotionResults[j];
+                if (res.emotion != Emotion.CONTEMPT && res.emotion != Emotion.DISGUST && 
+                    res.emotion != Emotion.FEAR)
+                {
+                    found = true;
+                }
+            }
+
+            return res;
+        }
+
         private void Log(String text)
         {
             Console.WriteLine(text);
         }
 
-        private void LogEmotionResult(Emotion[] emotions)
+        private void LogEmotionResult(Microsoft.ProjectOxford.Emotion.Contract.Emotion[] emotions)
         {
             int emotionResultCount = 0;
             if (emotions == null || emotions.Length <= 0)
@@ -149,7 +216,7 @@ namespace MoodsicApp
                     "    or other factors");
                 return;
             }
-            foreach (Emotion emotion in emotions)
+            foreach (Microsoft.ProjectOxford.Emotion.Contract.Emotion emotion in emotions)
             {
                 Log("Emotion[" + emotionResultCount + "]");
                 Log("  .FaceRectangle = left: " + emotion.FaceRectangle.Left

@@ -36,6 +36,7 @@
             </DockPanel>
             <!-- Ratio: 1.332 -->
             <cam:Webcam Grid.Column="0" Name="WebcamCtrl" Margin="10" Height="400" Width="533" />
+            <Label Name="analysisResult" />
         </DockPanel>
     </Grid>
 </Window>
