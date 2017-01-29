@@ -4,10 +4,10 @@ namespace MoodsicApp
 {
     struct DetectedResult : IComparable<DetectedResult>
     {
-        public Emotion emotion;
+        public EmotionEnum emotion;
         public float value;
 
-        public DetectedResult(Emotion e, float v)
+        public DetectedResult(EmotionEnum e, float v)
         {
             emotion = e;
             value = v;
@@ -17,19 +17,19 @@ namespace MoodsicApp
         {
             switch (emotion)
             {
-                case Emotion.ANGER:
+                case EmotionEnum.ANGER:
                     return Mood.AGRESSIVE;
-                case Emotion.CONTEMPT:
-                case Emotion.DISGUST:
-                case Emotion.FEAR:
+                case EmotionEnum.CONTEMPT:
+                case EmotionEnum.DISGUST:
+                case EmotionEnum.FEAR:
                     return Mood.PEACEFUL;
-                case Emotion.HAPPINESS:
+                case EmotionEnum.HAPPINESS:
                     return Mood.LIVELY;
-                case Emotion.NEUTRAL:
+                case EmotionEnum.NEUTRAL:
                     return Mood.PEACEFUL;
-                case Emotion.SADNESS:
+                case EmotionEnum.SADNESS:
                     return Mood.SENTIMENTAL;
-                case Emotion.SURPRISE:
+                case EmotionEnum.SURPRISE:
                     return Mood.STIRRING;
 
             }
@@ -44,7 +44,7 @@ namespace MoodsicApp
         }
     }
 
-    enum Emotion
+    enum EmotionEnum
     {
         NONE = 0,
         ANGER = 1,
