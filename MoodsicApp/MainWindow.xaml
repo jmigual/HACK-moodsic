@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿<Window x:Class="MoodsicApp.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl" 
@@ -38,3 +39,49 @@
         </TabControl>
     </Grid>
 </Window>
+=======
+﻿<Window x:Class="MoodsicApp.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:cam="clr-namespace:WebcamControl;assembly=WebcamControl" 
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:MoodsicApp"
+        mc:Ignorable="d"
+        Title="Moodsic" Height="600" Width="700" WindowState="Maximized">
+
+    <Grid>
+        <DockPanel HorizontalAlignment="Center">
+            <DockPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                <Grid DockPanel.Dock="Top" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="150*" MaxWidth="200"/>
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Select an image"/>
+                    <TextBox Grid.Column="1" Name="pathBox" Margin="10,0"/>
+                    <Button Grid.Column="2" Name="pathButton" Click="pathButton_Click" HorizontalAlignment="Stretch" Margin="0,0,10,0" >...</Button>
+                    <CheckBox Grid.Column="3" Name="useWebcam" VerticalAlignment="Center">Use webcam</CheckBox>
+                </Grid>
+                <Grid DockPanel.Dock="Bottom" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="1*" />
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Video Device" />
+                    <ComboBox Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" x:Name="VideoDevicesComboBox" Margin="10,0"/>
+                    <Button Grid.Column="2" Content="Take Snapshot" HorizontalAlignment="Center" x:Name="TakeSnapshotButton" Click="TakeSnapshotButton_Click"/>
+                </Grid>
+            </DockPanel>
+            <!-- Ratio: 1.332 -->
+            <StackPanel DockPanel.Dock="Top" Margin="10">
+                <cam:Webcam Name="WebcamCtrl" Height="400" Width="533" />
+                <Label Name="analysisResult" Content="Detected emotion: "/>
+            </StackPanel>
+        </DockPanel>
+    </Grid>
+</Window>
+>>>>>>> e67b020da6dd1ae08ba7569757ffc2cce1bfe8ce

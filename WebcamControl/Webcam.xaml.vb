@@ -368,7 +368,7 @@ Public Class Webcam
             Dim panelHeight As Integer = WebcamPanel.Height
             Dim imgFormat As ImageFormat = CType(GetValue(SnapshotFormatProperty), ImageFormat)
             '"Snapshot " & TimeStamp() & "." & imgFormat.ToString();
-            Dim filePath As String = Path.Combine(imgDir, "snapshot" & "." & imgFormat.ToString())
+            Dim filePath As String = Path.Combine(imgDir, "snapshot" & "." & "jpg")
             Dim pnt As Point = WebcamPanel.PointToScreen(New Point(WebcamPanel.ClientRectangle.X, WebcamPanel.ClientRectangle.Y))
 
             Using bmp As New Bitmap(panelWidth, panelHeight)

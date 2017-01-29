@@ -2,7 +2,7 @@
 using System.IO;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Media;
+using System.Collections.Generic;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
@@ -12,7 +12,7 @@ using WebcamControl;
 
 using System.Windows.Controls;
 using System.Windows.Data;
-
+using WMPLib;
 
 namespace MoodsicApp
 {
@@ -21,25 +21,38 @@ namespace MoodsicApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private String imagePath;
-        private String apiKey = "1487efd373034a61b500849db503e8f1";
+        private String m_imagePath;
+        private String m_picturesDefaultPath;
+        private String m_apiKey = "1487efd373034a61b500849db503e8f1";
+        private Queue<Track> m_songQueue;
+        private Queue<CalcScores> m_emotionsQueue;
+        private CalcScores m_averageEmotion;
+        private Mood m_currentMood;
+        private System.Windows.Forms.Timer m_timer;
+        private WindowsMediaPlayer m_player;
+
+        private const int m_maxEmotions = 5;
+        private const int kInterval = 5000;
 
         public MainWindow()
         {
-            imagePath = "";
+            m_imagePath = "";
             InitializeComponent();
 
-            this.console.FontFamily = new FontFamily("Consolas");
+            m_emotionsQueue = new Queue<CalcScores>();
+            m_averageEmotion = new CalcScores();
+            m_player = new WindowsMediaPlayer();
+            
+            m_player.settings.autoStart = false;
 
             Binding binding_1 = new Binding("SelectedValue");
             binding_1.Source = VideoDevicesComboBox;
             WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
 
-            imagePath = @"C:\webcam_photos";;
-            if (!Directory.Exists(imagePath))
-                Directory.CreateDirectory(imagePath);
+            m_picturesDefaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
 
-            WebcamCtrl.ImageDirectory = imagePath;
+            WebcamCtrl.ImageDirectory = m_picturesDefaultPath;
+            m_picturesDefaultPath += @"\snapshot.jpg";
             WebcamCtrl.FrameRate = 30;
             WebcamCtrl.FrameSize = new System.Drawing.Size(640, 480);
 
@@ -47,7 +60,11 @@ namespace MoodsicApp
             VideoDevicesComboBox.ItemsSource = vidDevices;
             VideoDevicesComboBox.SelectedIndex = 0;
 
-            // START CAPTURING
+            startCapturing();
+        }
+
+        private void startCapturing()
+        {
             try
             {
                 // Display webcam video
@@ -57,14 +74,19 @@ namespace MoodsicApp
             {
                 MessageBox.Show("Device is in use by another application");
             }
-            
 
+            m_timer = new System.Windows.Forms.Timer();
+            m_timer.Tick += new EventHandler(Timer_handle);
+            m_timer.Interval = kInterval;
+            m_timer.Start();
         }
 
         private void TakeSnapshotButton_Click(object sender, RoutedEventArgs e)
         {
             // Take snapshot of webcam video.
             WebcamCtrl.TakeSnapshot();
+            m_imagePath = m_picturesDefaultPath;
+            //scanAndPlay();
         }
 
         private void pathButton_Click(object sender, RoutedEventArgs e)
@@ -79,29 +101,92 @@ namespace MoodsicApp
                 return;
             }
 
-            imagePath = dialog.FileName;
-            this.pathBox.Text = imagePath;
-            scanAndPlay();
+            m_imagePath = dialog.FileName;
+            this.pathBox.Text = m_imagePath;
+            scan();
         }
 
-        private async void scanAndPlay()
+        // Called every 5 seconds
+        private void Timer_handle(object sender, EventArgs e)
+        {
+            IWMPControls controls = m_player.controls;
+
+            if ((bool) useWebcam.IsChecked)
+            {
+                WebcamCtrl.TakeSnapshot();
+                m_imagePath = m_picturesDefaultPath;
+                scan();
+            }
+
+            // We need to check if the mood needs to be switched
+            if (controls.currentItem != null &&
+                controls.currentItem.duration - controls.currentPosition < 10.0)
+            {
+                DetectedResult emotion = getBestValue(m_averageEmotion);
+                Mood mood = emotion.toMood();
+
+                if (mood != m_currentMood)
+                {
+                    m_currentMood = mood;
+                    ResetPlaylist(mood);
+                }
+            }
+
+            if (controls.currentItem != null &&
+               controls.currentItem.duration - controls.currentPosition < 2.0)
+            {
+                Track track = m_songQueue.Dequeue();
+                m_player.URL = track.id;
+                // Box with artist and title track.artist and track.sonh
+            }
+        }
+
+        private void ResetPlaylist(Mood mood)
+        {
+            m_songQueue = new Queue<Track>();
+            Tuple<String, String>[] songs = SongLoader.GetMusic(((int)mood).ToString());
+            String[] songIds = new String[songs.Length];
+            for (int i = 0; i < songs.Length; ++i)
+            {
+                String s = SongLoader.GetYoutubeId(songs[i].Item1 + " " + songs[i].Item2);
+                if (s != null)
+                {
+                    m_songQueue.Enqueue(new Track(s, songs[i].Item1, songs[i].Item2));
+                    SongLoader.DownloadVideo(songIds[i]);
+                }
+            }
+        }
+
+        private async void scan()
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
-            this.LogEmotionResult(emotionResult);
+            LogEmotionResult(emotionResult);
+            Scores emotion = selectEmotion(emotionResult);
+            CalcScores cScore = new CalcScores(emotion);
 
-
+            int n = m_emotionsQueue.Count;
+            if (m_emotionsQueue.Count < m_maxEmotions)
+            {
+                m_averageEmotion = n*m_averageEmotion*(1/(n+1)) + cScore*(1/(n+1));
+            }
+            else
+            {
+                m_averageEmotion = m_averageEmotion + m_emotionsQueue.Peek()*(-1/n) + cScore * (1/n);
+                m_emotionsQueue.Dequeue();
+            }
+            m_emotionsQueue.Enqueue(cScore);
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
         {
-            this.Log("Using " + imagePath + " file");
+            Log("Using " + m_imagePath + " file");
 
-            EmotionServiceClient client = new EmotionServiceClient(apiKey);
-            this.Log("Calling EmotionServiceClient.RecognizeAsync()...");
+            EmotionServiceClient client = new EmotionServiceClient(m_apiKey);
+            Log("Calling EmotionServiceClient.RecognizeAsync()...");
 
             try
             {
-                using (Stream imageFileStream = File.OpenRead(imagePath))
+                using (Stream imageFileStream = File.OpenRead(m_imagePath))
                 {
                     // Detect the emotions
                     return await client.RecognizeAsync(imageFileStream);
@@ -114,9 +199,77 @@ namespace MoodsicApp
             }
         }
 
+        private Scores selectEmotion(Emotion[] emotionResult)
+        {
+            
+            // Select the biggest rectangle
+            if (emotionResult.Length <= 0 || emotionResult == null)
+            { 
+                return null;
+            }
+
+            Scores faceResult = null;
+            int space = -1;
+            foreach(Emotion emotion in emotionResult)
+            {
+                Rectangle fRect = emotion.FaceRectangle;
+                int auxSpace = fRect.Width + fRect.Height;
+
+                if (auxSpace > space)
+                {
+                    space = auxSpace;
+                    faceResult = emotion.Scores;
+                }
+            }
+
+            return faceResult;
+        }
+
+        private DetectedResult getBestValue(Scores faceResult)
+        {
+            List<float> values = new List<float>(8);
+
+            values.Add(faceResult.Anger);
+            values.Add(faceResult.Contempt);
+            values.Add(faceResult.Disgust);
+            values.Add(faceResult.Fear);
+            values.Add(faceResult.Happiness);
+            values.Add(faceResult.Neutral);
+            values.Add(faceResult.Sadness);
+            values.Add(faceResult.Surprise);
+
+            List<DetectedResult> emotionResults = new List<DetectedResult>(values.Count);
+            for (int i = 0; i < values.Count; ++i)
+            {
+                emotionResults.Add(new DetectedResult((EmotionEnum)(i + 1), values[i]));
+            }
+            emotionResults.Sort();
+
+
+            int j = emotionResults.Count - 1;
+            analysisResult.Content = "Detected emotion: " + emotionResults[j].emotion.ToString() +
+                "  Value: " + emotionResults[j].value.ToString();
+            Log("Detected emotion: " + emotionResults[j].emotion.ToString());
+
+            DetectedResult res = new DetectedResult();
+            bool found = false;
+            while (!found && j >= emotionResults.Count - 3)
+            {
+                res = emotionResults[j];
+                if (res.emotion != EmotionEnum.CONTEMPT && res.emotion != EmotionEnum.DISGUST &&
+                    res.emotion != EmotionEnum.FEAR)
+                {
+                    found = true;
+                }
+                --j;
+            }
+
+            return res;
+        }
+
         private void Log(String text)
         {
-            this.console.Text += "\n" + text;
+            Console.WriteLine(text);
         }
 
         private void LogEmotionResult(Emotion[] emotions)
