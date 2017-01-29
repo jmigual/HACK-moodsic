@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Music_player"
+        xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
         mc:Ignorable="d"
         Title="Moodsic" Height="330" Width="460" Background="Tomato" WindowStartupLocation="CenterScreen">
     <Window.Resources>
@@ -19,7 +20,7 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Red"/>
+                    <Setter Property="Background" Value="Transparent"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
@@ -36,12 +37,15 @@
             </Setter>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="Red"/>
+                    <Setter Property="Background" Value="Transparent"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    <Grid Margin="10" Background="Tomato" ShowGridLines="False">
+    <Grid Margin="0" ShowGridLines="False">
+        <Grid.Background>
+            <ImageBrush ImageSource="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\wood.png" Stretch="UniformToFill"/>
+        </Grid.Background>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
             <RowDefinition Height="60" />
@@ -85,7 +89,7 @@
                 VerticalAlignment="Center"
                 HorizontalAlignment="Center"
                 Orientation="Horizontal"
-                Background="Tomato">
+                Background="Transparent">
 
                     <!-- Play -->
                 <ToggleButton
@@ -94,7 +98,7 @@
                     Margin="4,0,4,0"
                     VerticalAlignment="Center"
                     Click="Play"
-                    Background="Tomato">
+                    Background="Transparent">
                     <Image Source="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\play.png"/>
                 </ToggleButton>
 
@@ -104,7 +108,7 @@
                     Margin="4,0,4,0"
                     VerticalAlignment="Center"
                     Click="Next"
-                    Background="Tomato">
+                    Background="Transparent">
                     <Image Source="C:\Users\Maria\Documents\Hackathons\Hack_cambridge_2017\media_player\Music_player\Music_player\images\next.png"/>
                 </Button>
             </StackPanel>
