@@ -42,8 +42,6 @@ namespace MoodsicApp
             imagePath = "";
             InitializeComponent();
 
-            this.console.FontFamily = new FontFamily("Consolas");
-
             Binding binding_1 = new Binding("SelectedValue");
             binding_1.Source = VideoDevicesComboBox;
             WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
@@ -118,7 +116,7 @@ namespace MoodsicApp
 
         private void Log(String text)
         {
-            this.console.Text += "\n" + text;
+            Console.WriteLine(text);
         }
 
         private void LogEmotionResult(Emotion[] emotions)
