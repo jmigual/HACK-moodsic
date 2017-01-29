@@ -101,7 +101,7 @@ namespace MoodsicApp
             return jsonObj.items[0].id.videoId;
         }
 
-        public static void DownloadVideo(String videoId)
+        public async static void DownloadVideo(String videoId)
         {
             if (!Directory.Exists(videoPath))
                 Directory.CreateDirectory(videoPath);
@@ -126,7 +126,7 @@ namespace MoodsicApp
             Console.WriteLine("Downloading video from \"{0}\"", downloadVideoUri);
             // Download the Web resource and save it into the current filesystem folder.
             //client.DownloadFile(downloadVideoUri, Environment.SpecialFolder.MyMusic + "\\" + videoId);
-            Byte[] bytes = client.DownloadData(downloadVideoUri);
+            Byte[] bytes = await Task.Run(() => client.DownloadData(downloadVideoUri));
             File.WriteAllBytes(videoPath + videoId + ".mp3", bytes);
             Console.WriteLine("Successfully Downloaded File \"{0}\" from \"{1}\" to \"{2}\"", videoId, downloadVideoUri, videoPath + videoId + ".mp3");
             Console.WriteLine("\nDownloaded file saved in the following file system folder:\n\t" + Environment.SpecialFolder.MyMusic + "\\" + videoId);

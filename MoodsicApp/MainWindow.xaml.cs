@@ -119,7 +119,10 @@ namespace MoodsicApp
                controls.currentItem.duration - controls.currentPosition < 2.0)
             {
                 Track track = m_songQueue.Dequeue();
-                m_player.URL = m_videoPath + track.id + ".mp3";
+                String uri = m_videoPath + track.id + ".mp3";
+                Log("Playing song: " + uri);
+                m_player.URL = uri;
+                controls.play();
                 m_songQueue.Enqueue(track);
                 // Box with artist and title track.artist and track.sonh
             }
@@ -138,7 +141,10 @@ namespace MoodsicApp
                     m_currentMood = mood;
                     ResetPlaylist(mood);
                     Track track = m_songQueue.Dequeue();
-                    m_player.URL = m_videoPath + track.id + ".mp3";
+                    String uri = m_videoPath + track.id + ".mp3";
+                    Log("First song: " + uri);
+                    m_player.URL = uri;
+                    m_player.controls.play();
                     m_songQueue.Enqueue(track);
                 }
                 m_player.controls.play();
@@ -152,7 +158,10 @@ namespace MoodsicApp
         {
             m_player.controls.stop();
             Track track = m_songQueue.Dequeue();
-            m_player.URL = m_videoPath + track.id + ".mp3";
+            String uri = m_videoPath + track.id + ".mp3";
+            Log("Next song: " + uri);
+            m_player.URL = uri;
+            m_player.controls.play();
             m_songQueue.Enqueue(track);
         }
 
