@@ -71,7 +71,7 @@
             <Slider
                     x:Name="TheSlider"
                     Minimum="0"
-                    Maximum="300"
+                    Maximum="1"
                     LargeChange="1"
                     DockPanel.Dock="Bottom"
                     Width="Auto"

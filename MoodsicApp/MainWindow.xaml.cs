@@ -30,6 +30,7 @@ namespace MoodsicApp
         private CalcScores m_averageEmotion;
         private Mood m_currentMood;
         private System.Windows.Forms.Timer m_timer;
+        private System.Windows.Forms.Timer m_timer2;
         private WindowsMediaPlayer m_player;
         private const String m_videoPath = @"My Songs\";
         private bool m_firstPlay = true;
@@ -83,6 +84,25 @@ namespace MoodsicApp
             m_timer.Tick += new EventHandler(Timer_handle);
             m_timer.Interval = kInterval;
             m_timer.Start();
+
+            m_timer2 = new System.Windows.Forms.Timer();
+            m_timer2.Tick += (s, e) =>
+            {
+                if (m_player == null)
+                    return;
+                IWMPControls controls = m_player.controls;
+                if (controls == null || controls.currentItem == null)
+                    return;
+
+                double pos = controls.currentPosition;
+                double duration = controls.currentItem.duration;
+                if (duration > 0.1)
+                {
+                    TheSlider.Value = pos / duration;
+                }
+            };
+            m_timer2.Interval = 400;
+            m_timer2.Start();
         }
 
         private void TakeSnapshotButton_Click(object sender, RoutedEventArgs e)
