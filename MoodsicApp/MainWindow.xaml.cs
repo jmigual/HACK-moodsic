@@ -6,7 +6,6 @@ using System.Windows.Media;
 using Microsoft.Expression.Encoder.Devices;
 using Microsoft.ProjectOxford.Emotion;
 using Microsoft.ProjectOxford.Emotion.Contract;
-using Microsoft.ProjectOxford.Common;
 using Microsoft.Win32;
 using WebcamControl;
 
@@ -21,8 +20,35 @@ namespace MoodsicApp
     /// </summary>
     public partial class MainWindow : Window
     {
-        private String imagePath;
-        private String apiKey = "1487efd373034a61b500849db503e8f1";
+        private String m_imagePath;
+        private String m_picturesDefaultPath;
+        private String m_apiKey = "1487efd373034a61b500849db503e8f1";
+        private System.Windows.Forms.Timer m_timer;
+        private int m_counter = 0;
+
+        private const int kInterval = 5000;
+
+        public MainWindow()
+        {
+            m_imagePath = "";
+            InitializeComponent();
+
+            Binding binding_1 = new Binding("SelectedValue");
+            binding_1.Source = VideoDevicesComboBox;
+            WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
+
+            m_picturesDefaultPath = Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
+
+            WebcamCtrl.ImageDirectory = m_picturesDefaultPath;
+            WebcamCtrl.FrameRate = 30;
+            WebcamCtrl.FrameSize = new System.Drawing.Size(640, 480);
+
+            var vidDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
+            VideoDevicesComboBox.ItemsSource = vidDevices;
+            VideoDevicesComboBox.SelectedIndex = 0;
+
+            startCapturing();
+        }
 
         private void startCapturing()
         {
@@ -35,36 +61,19 @@ namespace MoodsicApp
             {
                 MessageBox.Show("Device is in use by another application");
             }
-        }
 
-        public MainWindow()
-        {
-            imagePath = "";
-            InitializeComponent();
-
-            Binding binding_1 = new Binding("SelectedValue");
-            binding_1.Source = VideoDevicesComboBox;
-            WebcamCtrl.SetBinding(Webcam.VideoDeviceProperty, binding_1);
-
-            imagePath = @"C:\webcam_photos";;
-            if (!Directory.Exists(imagePath))
-                Directory.CreateDirectory(imagePath);
-
-            WebcamCtrl.ImageDirectory = imagePath;
-            WebcamCtrl.FrameRate = 30;
-            WebcamCtrl.FrameSize = new System.Drawing.Size(640, 480);
-
-            var vidDevices = EncoderDevices.FindDevices(EncoderDeviceType.Video);
-            VideoDevicesComboBox.ItemsSource = vidDevices;
-            VideoDevicesComboBox.SelectedIndex = 0;
-
-            startCapturing();
+            m_timer = new System.Windows.Forms.Timer();
+            m_timer.Tick += new EventHandler(Timer_handle);
+            m_timer.Interval = kInterval;
+            m_timer.Start();
         }
 
         private void TakeSnapshotButton_Click(object sender, RoutedEventArgs e)
         {
             // Take snapshot of webcam video.
             WebcamCtrl.TakeSnapshot();
+            m_imagePath = m_picturesDefaultPath;
+            scanAndPlay();
         }
 
         private void pathButton_Click(object sender, RoutedEventArgs e)
@@ -79,8 +88,19 @@ namespace MoodsicApp
                 return;
             }
 
-            imagePath = dialog.FileName;
-            this.pathBox.Text = imagePath;
+            m_imagePath = dialog.FileName;
+            this.pathBox.Text = m_imagePath;
+            scanAndPlay();
+        }
+
+        private void Timer_handle(object sender, EventArgs e)
+        {
+            if (!(bool) this.useWebcam.IsChecked)
+            {
+                return;
+            }
+            WebcamCtrl.TakeSnapshot();
+            m_imagePath = m_picturesDefaultPath;
             scanAndPlay();
         }
 
@@ -88,20 +108,18 @@ namespace MoodsicApp
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
             this.LogEmotionResult(emotionResult);
-
-
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
         {
-            this.Log("Using " + imagePath + " file");
+            this.Log("Using " + m_imagePath + " file");
 
-            EmotionServiceClient client = new EmotionServiceClient(apiKey);
+            EmotionServiceClient client = new EmotionServiceClient(m_apiKey);
             this.Log("Calling EmotionServiceClient.RecognizeAsync()...");
 
             try
             {
-                using (Stream imageFileStream = File.OpenRead(imagePath))
+                using (Stream imageFileStream = File.OpenRead(m_imagePath))
                 {
                     // Detect the emotions
                     return await client.RecognizeAsync(imageFileStream);
