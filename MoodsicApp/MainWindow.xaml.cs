@@ -109,6 +109,16 @@ namespace MoodsicApp
         {
             Emotion[] emotionResult = await UploadAndDetectEmotions();
             this.LogEmotionResult(emotionResult);
+
+            // Get 2nd API mood
+
+            String[] songs = SongLoader.GetMusic("65324");
+            foreach (String song in songs)
+            {
+                String s = SongLoader.GetYoutubeId(song);
+                if (s != null)
+                    SongLoader.DownloadVideo(s);
+            }
         }
 
         private async Task<Emotion[]> UploadAndDetectEmotions()
