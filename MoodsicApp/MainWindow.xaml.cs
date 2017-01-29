@@ -127,6 +127,7 @@ namespace MoodsicApp
 
                 if (mood != m_currentMood)
                 {
+                    m_currentMood = mood;
                     ResetPlaylist(mood);
                 }
             }
