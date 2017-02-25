@@ -6,6 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:MoodsicApp"
         mc:Ignorable="d"
+        Icon="/images/icon.jpg"
         Title="Moodsic" Height="600" Width="670" WindowStartupLocation="CenterScreen">
     <Window.Resources>
         <Style x:Key="button_style" TargetType="{x:Type Button}">
